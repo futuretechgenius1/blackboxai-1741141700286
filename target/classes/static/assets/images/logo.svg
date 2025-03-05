@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="50" viewBox="0 0 200 50">
+    <style>
+        .logo-text { font-family: Arial, sans-serif; font-weight: bold; }
+        .primary { fill: #4f46e5; }
+        .secondary { fill: #7c3aed; }
+    </style>
+    <g transform="translate(10, 35)">
+        <!-- Icon -->
+        <path class="primary" d="M0 0h8v-20c0-4.418 3.582-8 8-8h4c4.418 0 8 3.582 8 8v20h8v-20c0-8.837-7.163-16-16-16h-4c-8.837 0-16 7.163-16 16v20z"/>
+        <circle class="secondary" cx="18" cy="-35" r="6"/>
+        
+        <!-- Text -->
+        <text x="45" y="0" class="logo-text primary" font-size="24">
+            PayTrack
+        </text>
+        <text x="140" y="0" class="logo-text secondary" font-size="24">
+            Pro
+        </text>
+    </g>
+</svg>
