@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/default :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Dashboard - Payroll System</title>
+</head>
+<body>
+    <section>
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+            <p class="mt-1 text-sm text-gray-600">
+                Welcome back, <span th:text="${#authentication.name}">User</span>
+            </p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <!-- Hours This Month -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-medium text-gray-500">Hours This Month</h3>
+                    <i class="fas fa-clock text-blue-500"></i>
+                </div>
+                <p class="mt-2 text-3xl font-semibold text-gray-900" th:text="${monthlyHours}">160</p>
+                <p class="mt-1 text-sm text-gray-600">
+                    <span th:text="${monthlyHoursChange}" class="text-green-600">+2.5%</span> vs last month
+                </p>
+            </div>
+
+            <!-- Current Pay Period -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-medium text-gray-500">Current Pay Period</h3>
+                    <i class="fas fa-calendar text-indigo-500"></i>
+                </div>
+                <p class="mt-2 text-3xl font-semibold text-gray-900" th:text="${payPeriodHours}">75</p>
+                <p class="mt-1 text-sm text-gray-600">hours logged</p>
+            </div>
+
+            <!-- Pending Approvals -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-medium text-gray-500">Pending Approvals</h3>
+                    <i class="fas fa-clock-rotate-left text-yellow-500"></i>
+                </div>
+                <p class="mt-2 text-3xl font-semibold text-gray-900" th:text="${pendingApprovals}">2</p>
+                <p class="mt-1 text-sm text-gray-600">work log entries</p>
+            </div>
+
+            <!-- Latest Payroll -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-medium text-gray-500">Latest Payroll</h3>
+                    <i class="fas fa-money-bill-wave text-green-500"></i>
+                </div>
+                <p class="mt-2 text-3xl font-semibold text-gray-900" th:text="${latestPayroll}">$2,450</p>
+                <p class="mt-1 text-sm text-gray-600">last pay period</p>
+            </div>
+        </div>
+
+        <!-- Recent Activity & Quick Actions -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Recent Activity -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">Recent Activity</h3>
+                    </div>
+                    <div class="divide-y divide-gray-200">
+                        <div th:each="activity : ${recentActivities}" class="px-6 py-4">
+                            <div class="flex items-center space-x-4">
+                                <div th:switch="${activity.type}" class="flex-shrink-0">
+                                    <i th:case="'WORKLOG'" class="fas fa-clock text-blue-500"></i>
+                                    <i th:case="'PAYROLL'" class="fas fa-money-bill-wave text-green-500"></i>
+                                    <i th:case="'APPROVAL'" class="fas fa-check-circle text-indigo-500"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-gray-900" th:text="${activity.description}">
+                                        Work log submitted for 8 hours
+                                    </p>
+                                    <p class="text-sm text-gray-500" th:text="${activity.timestamp}">
+                                        2 hours ago
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">Quick Actions</h3>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <a href="/worklogs/new" 
+                           class="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                            <i class="fas fa-plus mr-2"></i>
+                            Log Work Hours
+                        </a>
+                        <a href="/payroll/current" 
+                           class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                            <i class="fas fa-file-invoice-dollar mr-2"></i>
+                            View Current Pay Period
+                        </a>
+                        <a href="/profile" 
+                           class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                            <i class="fas fa-user-cog mr-2"></i>
+                            Update Profile
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Calendar -->
+                <div class="mt-8 bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">Pay Period Calendar</h3>
+                    </div>
+                    <div class="p-6">
+                        <!-- Simple calendar display -->
+                        <div class="text-center">
+                            <p class="text-sm font-medium text-gray-900" th:text="${payPeriodDates}">
+                                November 1 - November 15, 2023
+                            </p>
+                            <p class="mt-1 text-sm text-gray-500" th:text="${daysRemaining}">
+                                5 days remaining
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
