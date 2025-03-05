@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- Text Input -->
+    <div th:fragment="input-text(label, name, value, required, placeholder)" class="form-group">
+        <label th:for="${name}" class="block text-sm font-medium text-gray-700" th:text="${label}">Label</label>
+        <input type="text" 
+               th:id="${name}"
+               th:name="${name}"
+               th:value="${value}"
+               th:required="${required}"
+               th:placeholder="${placeholder}"
+               class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+        <p th:if="${#fields.hasErrors(name)}" class="mt-1 text-sm text-red-600" th:errors="*{__${name}__}">Error message</p>
+    </div>
+
+    <!-- Email Input -->
+    <div th:fragment="input-email(label, name, value, required, placeholder)" class="form-group">
+        <label th:for="${name}" class="block text-sm font-medium text-gray-700" th:text="${label}">Email</label>
+        <input type="email" 
+               th:id="${name}"
+               th:name="${name}"
+               th:value="${value}"
+               th:required="${required}"
+               th:placeholder="${placeholder}"
+               class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+        <p th:if="${#fields.hasErrors(name)}" class="mt-1 text-sm text-red-600" th:errors="*{__${name}__}">Error message</p>
+    </div>
+
+    <!-- Password Input -->
+    <div th:fragment="input-password(label, name, required)" class="form-group">
+        <label th:for="${name}" class="block text-sm font-medium text-gray-700" th:text="${label}">Password</label>
+        <input type="password" 
+               th:id="${name}"
+               th:name="${name}"
+               th:required="${required}"
+               class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+        <p th:if="${#fields.hasErrors(name)}" class="mt-1 text-sm text-red-600" th:errors="*{__${name}__}">Error message</p>
+    </div>
+
+    <!-- Number Input -->
+    <div th:fragment="input-number(label, name, value, min, max, step, required)" class="form-group">
+        <label th:for="${name}" class="block text-sm font-medium text-gray-700" th:text="${label}">Number</label>
+        <input type="number" 
+               th:id="${name}"
+               th:name="${name}"
+               th:value="${value}"
+               th:min="${min}"
+               th:max="${max}"
+               th:step="${step}"
+               th:required="${required}"
+               class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+        <p th:if="${#fields.hasErrors(name)}" class="mt-1 text-sm text-red-600" th:errors="*{__${name}__}">Error message</p>
+    </div>
+
+    <!-- Date Input -->
+    <div th:fragment="input-date(label, name, value, required)" class="form-group">
+        <label th:for="${name}" class="block text-sm font-medium text-gray-700" th:text="${label}">Date</label>
+        <input type="date" 
+               th:id="${name}"
+               th:name="${name}"
+               th:value="${value}"
+               th:required="${required}"
+               class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+        <p th:if="${#fields.hasErrors(name)}" class="mt-1 text-sm text-red-600" th:errors="*{__${name}__}">Error message</p>
+    </div>
+
+    <!-- Time Input -->
+    <div th:fragment="input-time(label, name, value, required)" class="form-group">
+        <label th:for="${name}" class="block text-sm font-medium text-gray-700" th:text="${label}">Time</label>
+        <input type="time" 
+               th:id="${name}"
+               th:name="${name}"
+               th:value="${value}"
+               th:required="${required}"
+               class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+        <p th:if="${#fields.hasErrors(name)}" class="mt-1 text-sm text-red-600" th:errors="*{__${name}__}">Error message</p>
+    </div>
+
+    <!-- Select Input -->
+    <div th:fragment="select(label, name, options, required)" class="form-group">
+        <label th:for="${name}" class="block text-sm font-medium text-gray-700" th:text="${label}">Select</label>
+        <select th:id="${name}"
+                th:name="${name}"
+                th:required="${required}"
+                class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            <option value="">Select an option</option>
+            <option th:each="option : ${options}"
+                    th:value="${option.value}"
+                    th:text="${option.label}"
+                    th:selected="${option.value == selected}">
+                Option
+            </option>
+        </select>
+        <p th:if="${#fields.hasErrors(name)}" class="mt-1 text-sm text-red-600" th:errors="*{__${name}__}">Error message</p>
+    </div>
+
+    <!-- Textarea -->
+    <div th:fragment="textarea(label, name, value, rows, required)" class="form-group">
+        <label th:for="${name}" class="block text-sm font-medium text-gray-700" th:text="${label}">Textarea</label>
+        <textarea th:id="${name}"
+                  th:name="${name}"
+                  th:text="${value}"
+                  th:rows="${rows}"
+                  th:required="${required}"
+                  class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"></textarea>
+        <p th:if="${#fields.hasErrors(name)}" class="mt-1 text-sm text-red-600" th:errors="*{__${name}__}">Error message</p>
+    </div>
+
+    <!-- Checkbox -->
+    <div th:fragment="checkbox(label, name, checked, required)" class="form-group">
+        <div class="flex items-center">
+            <input type="checkbox" 
+                   th:id="${name}"
+                   th:name="${name}"
+                   th:checked="${checked}"
+                   th:required="${required}"
+                   class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+            <label th:for="${name}" 
+                   class="ml-2 block text-sm text-gray-900" 
+                   th:text="${label}">Checkbox</label>
+        </div>
+        <p th:if="${#fields.hasErrors(name)}" class="mt-1 text-sm text-red-600" th:errors="*{__${name}__}">Error message</p>
+    </div>
+
+    <!-- Submit Button -->
+    <div th:fragment="submit-button(text)" class="form-group">
+        <button type="submit"
+                class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <i class="fas fa-save mr-2"></i>
+            <span th:text="${text}">Submit</span>
+        </button>
+    </div>
+
+    <!-- Cancel Button -->
+    <div th:fragment="cancel-button(text, href)" class="form-group">
+        <a th:href="${href}"
+           class="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <i class="fas fa-times mr-2"></i>
+            <span th:text="${text}">Cancel</span>
+        </a>
+    </div>
+</body>
+</html>
