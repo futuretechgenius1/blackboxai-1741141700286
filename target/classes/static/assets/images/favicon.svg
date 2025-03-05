@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+    <style>
+        .primary { fill: #4f46e5; }
+        .secondary { fill: #7c3aed; }
+    </style>
+    <!-- Background Circle -->
+    <circle cx="16" cy="16" r="16" class="primary" opacity="0.1"/>
+    
+    <!-- Main Icon -->
+    <g transform="translate(8, 6)">
+        <!-- Stylized P for PayTrack -->
+        <path class="primary" d="M2 20h3v-8h5c2.76 0 5-2.24 5-5s-2.24-5-5-5H2v18zm3-15h5c1.1 0 2 .9 2 2s-.9 2-2 2H5V5z"/>
+        
+        <!-- Clock Hand -->
+        <path class="secondary" d="M12 8v4l3 3" stroke-width="2" stroke-linecap="round"/>
+    </g>
+</svg>
