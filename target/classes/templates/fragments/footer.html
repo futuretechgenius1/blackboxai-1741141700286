@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- Main Footer -->
+    <footer th:fragment="main-footer" class="bg-white border-t border-gray-200">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Company Info -->
+                <div class="col-span-2">
+                    <img src="/assets/images/logo.svg" alt="PayTrack Pro" class="h-8 mb-4">
+                    <p class="text-gray-500 text-sm mb-4" th:text="${@projectConfig.PROJECT_DESCRIPTION}">
+                        Employee Work Tracking and Payroll Management System
+                    </p>
+                    <p class="text-gray-500 text-sm">
+                        © <span th:text="${#dates.year(#dates.createNow())}">2023</span>
+                        <span th:text="${@projectConfig.COMPANY_NAME}">TechCorp Solutions</span>.
+                        All rights reserved.
+                    </p>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">
+                        Quick Links
+                    </h3>
+                    <ul class="space-y-3">
+                        <li>
+                            <a href="/dashboard" class="text-gray-500 hover:text-gray-900">
+                                Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/worklogs" class="text-gray-500 hover:text-gray-900">
+                                Work Logs
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/payroll" class="text-gray-500 hover:text-gray-900">
+                                Payroll
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/profile" class="text-gray-500 hover:text-gray-900">
+                                Profile
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Support -->
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">
+                        Support
+                    </h3>
+                    <ul class="space-y-3">
+                        <li>
+                            <a href="/help" class="text-gray-500 hover:text-gray-900">
+                                Help Center
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/documentation" class="text-gray-500 hover:text-gray-900">
+                                Documentation
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/contact" class="text-gray-500 hover:text-gray-900">
+                                Contact Support
+                            </a>
+                        </li>
+                        <li>
+                            <span class="text-gray-500">
+                                Version <span th:text="${@projectConfig.PROJECT_VERSION}">1.0.0</span>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Bottom Bar -->
+            <div class="mt-8 pt-8 border-t border-gray-200">
+                <div class="flex justify-between items-center">
+                    <!-- Legal Links -->
+                    <div class="flex space-x-6">
+                        <a href="/privacy" class="text-gray-500 hover:text-gray-900 text-sm">
+                            Privacy Policy
+                        </a>
+                        <a href="/terms" class="text-gray-500 hover:text-gray-900 text-sm">
+                            Terms of Service
+                        </a>
+                        <a href="/security" class="text-gray-500 hover:text-gray-900 text-sm">
+                            Security
+                        </a>
+                    </div>
+
+                    <!-- Social Links -->
+                    <div class="flex space-x-6">
+                        <a href="#" class="text-gray-400 hover:text-gray-500">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-gray-500">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-gray-500">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Simple Footer -->
+    <footer th:fragment="simple-footer" class="bg-white border-t border-gray-200">
+        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-sm text-gray-500">
+                © <span th:text="${#dates.year(#dates.createNow())}">2023</span>
+                <span th:text="${@projectConfig.COMPANY_NAME}">TechCorp Solutions</span>.
+                All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Loading Spinner -->
+    <div th:fragment="loading-spinner" 
+         id="loading-spinner"
+         class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-indigo-500"></div>
+    </div>
+</body>
+</html>
