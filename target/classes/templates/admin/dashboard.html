@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/default :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Admin Dashboard - Payroll System</title>
+</head>
+<body>
+    <section>
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+            <p class="mt-1 text-sm text-gray-600">
+                System overview and management
+            </p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <!-- Total Employees -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-medium text-gray-500">Total Employees</h3>
+                    <i class="fas fa-users text-blue-500"></i>
+                </div>
+                <p class="mt-2 text-3xl font-semibold text-gray-900" th:text="${totalEmployees}">150</p>
+                <p class="mt-1 text-sm text-gray-600">
+                    Active employees
+                </p>
+            </div>
+
+            <!-- Pending Approvals -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-medium text-gray-500">Pending Approvals</h3>
+                    <i class="fas fa-clock text-yellow-500"></i>
+                </div>
+                <p class="mt-2 text-3xl font-semibold text-gray-900" th:text="${pendingApprovals}">23</p>
+                <p class="mt-1 text-sm text-gray-600">
+                    Work logs awaiting review
+                </p>
+            </div>
+
+            <!-- Monthly Payroll -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-medium text-gray-500">Monthly Payroll</h3>
+                    <i class="fas fa-money-bill-wave text-green-500"></i>
+                </div>
+                <p class="mt-2 text-3xl font-semibold text-gray-900" th:text="${'$' + #numbers.formatDecimal(monthlyPayroll, 0, 'COMMA', 2, 'POINT')}">$45,250.00</p>
+                <p class="mt-1 text-sm text-gray-600">
+                    Current month total
+                </p>
+            </div>
+
+            <!-- Active Departments -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-medium text-gray-500">Active Departments</h3>
+                    <i class="fas fa-building text-purple-500"></i>
+                </div>
+                <p class="mt-2 text-3xl font-semibold text-gray-900" th:text="${activeDepartments}">5</p>
+                <p class="mt-1 text-sm text-gray-600">
+                    Departments with employees
+                </p>
+            </div>
+        </div>
+
+        <!-- Quick Actions & Recent Activity -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Quick Actions -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">Quick Actions</h3>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <a href="/admin/employees/new" 
+                           class="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                            <i class="fas fa-user-plus mr-2"></i>
+                            Add New Employee
+                        </a>
+                        <a href="/admin/payscales/new" 
+                           class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                            <i class="fas fa-sliders-h mr-2"></i>
+                            Configure Pay Scale
+                        </a>
+                        <a href="/admin/reports" 
+                           class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                            <i class="fas fa-file-alt mr-2"></i>
+                            Generate Reports
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Department Summary -->
+                <div class="mt-8 bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">Department Summary</h3>
+                    </div>
+                    <div class="p-6">
+                        <ul class="divide-y divide-gray-200">
+                            <li th:each="dept : ${departmentStats}" class="py-3">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-900" th:text="${dept.name}">IT Department</p>
+                                        <p class="text-sm text-gray-500" th:text="${dept.employeeCount + ' employees'}">25 employees</p>
+                                    </div>
+                                    <p class="text-sm font-medium text-gray-900" th:text="${'$' + #numbers.formatDecimal(dept.totalPayroll, 0, 'COMMA', 2, 'POINT')}">$12,450.00</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">Recent Activity</h3>
+                    </div>
+                    <div class="divide-y divide-gray-200">
+                        <div th:each="activity : ${recentActivities}" class="px-6 py-4">
+                            <div class="flex items-center space-x-4">
+                                <div th:switch="${activity.type}" class="flex-shrink-0">
+                                    <i th:case="'EMPLOYEE'" class="fas fa-user text-blue-500"></i>
+                                    <i th:case="'WORKLOG'" class="fas fa-clock text-yellow-500"></i>
+                                    <i th:case="'PAYROLL'" class="fas fa-money-bill-wave text-green-500"></i>
+                                    <i th:case="'SYSTEM'" class="fas fa-cog text-gray-500"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900" th:text="${activity.description}">
+                                        New employee John Doe added to IT Department
+                                    </p>
+                                    <p class="text-sm text-gray-500">
+                                        <span th:text="${activity.user}">Admin</span> • 
+                                        <span th:text="${activity.timestamp}">2 hours ago</span>
+                                    </p>
+                                </div>
+                                <div th:if="${activity.actionRequired}" class="flex-shrink-0">
+                                    <a th:href="${activity.actionUrl}" 
+                                       class="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-5 font-medium rounded-full text-white bg-indigo-600 hover:bg-indigo-700">
+                                        Review
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Alerts -->
+                <div class="mt-8 bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">System Alerts</h3>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div th:each="alert : ${systemAlerts}" 
+                             th:class="${'rounded-md p-4 ' + 
+                                      (alert.severity == 'HIGH' ? 'bg-red-50 text-red-700' :
+                                       alert.severity == 'MEDIUM' ? 'bg-yellow-50 text-yellow-700' :
+                                       'bg-blue-50 text-blue-700')}">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i th:class="${'fas ' + 
+                                                (alert.severity == 'HIGH' ? 'fa-exclamation-circle text-red-400' :
+                                                 alert.severity == 'MEDIUM' ? 'fa-exclamation-triangle text-yellow-400' :
+                                                 'fa-info-circle text-blue-400')}"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium" th:text="${alert.title}">System Update Required</h3>
+                                    <div class="mt-2 text-sm" th:text="${alert.message}">
+                                        A new system update is available. Please schedule maintenance.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
