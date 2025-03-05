@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/default :: layout(~{::title}, ~{::section})}">
+<head>
+    <title>Payroll Reports - Payroll System</title>
+</head>
+<body>
+    <section>
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">Payroll Reports</h1>
+                    <p class="mt-1 text-sm text-gray-600">
+                        View and manage payroll records and generate reports
+                    </p>
+                </div>
+                <div class="flex space-x-3">
+                    <button type="button" 
+                            onclick="generatePayroll()"
+                            class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+                        <i class="fas fa-calculator mr-2"></i>
+                        Generate Payroll
+                    </button>
+                    <button type="button"
+                            onclick="exportReport()"
+                            class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                        <i class="fas fa-download mr-2"></i>
+                        Export Report
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="mb-6 bg-white shadow rounded-lg p-6">
+            <form id="filterForm" th:action="@{/admin/payroll/report}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <!-- Date Range -->
+                <div>
+                    <label for="startDate" class="block text-sm font-medium text-gray-700">Start Date</label>
+                    <input type="date" 
+                           id="startDate" 
+                           name="startDate" 
+                           th:value="${param.startDate}"
+                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                </div>
+                <div>
+                    <label for="endDate" class="block text-sm font-medium text-gray-700">End Date</label>
+                    <input type="date" 
+                           id="endDate" 
+                           name="endDate" 
+                           th:value="${param.endDate}"
+                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                </div>
+
+                <!-- Department Filter -->
+                <div>
+                    <label for="department" class="block text-sm font-medium text-gray-700">Department</label>
+                    <select id="department" 
+                            name="department" 
+                            th:value="${param.department}"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <option value="">All Departments</option>
+                        <option th:each="dept : ${departments}" 
+                                th:value="${dept}"
+                                th:text="${dept}">IT</option>
+                    </select>
+                </div>
+
+                <!-- Apply Filters Button -->
+                <div class="flex items-end">
+                    <button type="submit" 
+                            class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700">
+                        <i class="fas fa-filter mr-2"></i>
+                        Apply Filters
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <!-- Total Payroll -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-sm font-medium text-gray-500">Total Payroll</h3>
+                <p class="mt-2 text-3xl font-semibold text-gray-900" th:text="${'$' + #numbers.formatDecimal(totalPayroll, 0, 'COMMA', 2, 'POINT')}">
+                    $45,250.00
+                </p>
+                <p class="mt-1 text-sm text-gray-600">For selected period</p>
+            </div>
+
+            <!-- Total Employees -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-sm font-medium text-gray-500">Total Employees</h3>
+                <p class="mt-2 text-3xl font-semibold text-gray-900" th:text="${totalEmployees}">
+                    150
+                </p>
+                <p class="mt-1 text-sm text-gray-600">Processed in this period</p>
+            </div>
+
+            <!-- Average Pay -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-sm font-medium text-gray-500">Average Pay</h3>
+                <p class="mt-2 text-3xl font-semibold text-gray-900" th:text="${'$' + #numbers.formatDecimal(averagePay, 0, 'COMMA', 2, 'POINT')}">
+                    $3,016.67
+                </p>
+                <p class="mt-1 text-sm text-gray-600">Per employee</p>
+            </div>
+        </div>
+
+        <!-- Payroll Records Table -->
+        <div class="bg-white shadow rounded-lg">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Employee
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Department
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Pay Period
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Hours
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Gross Pay
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Deductions
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Net Pay
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Status
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr th:each="record : ${payrollRecords}">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900" 
+                                     th:text="${record.user.firstName + ' ' + record.user.lastName}">
+                                    John Doe
+                                </div>
+                                <div class="text-sm text-gray-500" th:text="${record.user.email}">
+                                    john.doe@company.com
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900" th:text="${record.user.department}">IT</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">
+                                    <span th:text="${#temporals.format(record.payPeriodStart, 'MMM dd')}">Nov 01</span> - 
+                                    <span th:text="${#temporals.format(record.payPeriodEnd, 'MMM dd, yyyy')}">Nov 15, 2023</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">
+                                    <span th:text="${record.regularHours}">160</span>
+                                    <span th:if="${record.overtimeHours > 0}" 
+                                          th:text="${'(+' + record.overtimeHours + ' OT)'}"
+                                          class="text-yellow-600">(+10 OT)</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900" 
+                                     th:text="${'$' + #numbers.formatDecimal(record.grossPay, 0, 'COMMA', 2, 'POINT')}">
+                                    $4,500.00
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-red-600" 
+                                     th:text="${'$' + #numbers.formatDecimal(record.deductions, 0, 'COMMA', 2, 'POINT')}">
+                                    -$900.00
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900" 
+                                     th:text="${'$' + #numbers.formatDecimal(record.netPay, 0, 'COMMA', 2, 'POINT')}">
+                                    $3,600.00
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span th:class="${'px-2 inline-flex text-xs leading-5 font-semibold rounded-full ' + 
+                                               (record.status == 'PAID' ? 'bg-green-100 text-green-800' : 
+                                                record.status == 'PROCESSED' ? 'bg-blue-100 text-blue-800' : 
+                                                'bg-yellow-100 text-yellow-800')}"
+                                      th:text="${record.status}">
+                                    PROCESSED
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <button type="button"
+                                        th:onclick="'viewDetails(' + ${record.id} + ')'"
+                                        class="text-indigo-600 hover:text-indigo-900 mr-3">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button type="button"
+                                        th:if="${record.status != 'PAID'}"
+                                        th:onclick="'markAsPaid(' + ${record.id} + ')'"
+                                        class="text-green-600 hover:text-green-900">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div th:replace="~{fragments/pagination :: pagination}"></div>
+        </div>
+    </section>
+
+    <!-- JavaScript -->
+    <script>
+        function generatePayroll() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const department = document.getElementById('department').value;
+
+            if (!startDate || !endDate) {
+                alert('Please select a date range');
+                return;
+            }
+
+            fetch('/admin/payroll/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    startDate: startDate,
+                    endDate: endDate,
+                    department: department
+                })
+            }).then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Error generating payroll');
+                }
+            });
+        }
+
+        function exportReport() {
+            const form = document.getElementById('filterForm');
+            const url = new URL(form.action);
+            const params = new URLSearchParams(new FormData(form));
+            params.append('export', 'true');
+            window.location.href = `${url}?${params.toString()}`;
+        }
+
+        function viewDetails(id) {
+            window.location.href = `/admin/payroll/${id}`;
+        }
+
+        function markAsPaid(id) {
+            if (confirm('Are you sure you want to mark this payroll record as paid?')) {
+                fetch(`/admin/payroll/${id}/paid`, {
+                    method: 'POST'
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert('Error updating payroll status');
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
