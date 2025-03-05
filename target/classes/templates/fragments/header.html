@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:fragment="header">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title th:text="${title + ' - ' + @projectConfig.PROJECT_NAME}">PayTrack Pro</title>
+        
+        <!-- Favicon -->
+        <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+        
+        <!-- Tailwind CSS -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        
+        <!-- Google Fonts -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        
+        <!-- Custom CSS -->
+        <link rel="stylesheet" th:href="@{/css/main.css}">
+        
+        <!-- App Logo -->
+        <link rel="preload" as="image" href="/assets/images/logo.svg">
+        
+        <!-- Meta tags -->
+        <meta name="description" th:content="${@projectConfig.PROJECT_DESCRIPTION}">
+        <meta name="application-name" th:content="${@projectConfig.PROJECT_NAME}">
+        <meta name="author" th:content="${@projectConfig.COMPANY_NAME}">
+        
+        <!-- Theme Color -->
+        <meta name="theme-color" content="#4f46e5">
+        
+        <!-- Open Graph tags -->
+        <meta property="og:title" th:content="${title + ' - ' + @projectConfig.PROJECT_NAME}">
+        <meta property="og:description" th:content="${@projectConfig.PROJECT_DESCRIPTION}">
+        <meta property="og:image" content="/assets/images/logo.svg">
+        
+        <!-- Custom styles for specific pages -->
+        <th:block th:replace="${styles}"></th:block>
+    </th:block>
+</head>
+<body>
+    <!-- This file is a fragment and not meant to be used directly -->
+</body>
+</html>
