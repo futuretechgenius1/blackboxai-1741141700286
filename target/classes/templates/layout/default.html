@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:fragment="layout(title, content)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:replace="${title}">Default Title</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar {
+            transition: all 0.3s;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                margin-left: -256px;
+            }
+            .sidebar.active {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Sidebar -->
+    <div class="sidebar fixed top-0 left-0 h-screen w-64 bg-gray-900 text-white">
+        <div class="p-4">
+            <h1 class="text-2xl font-bold mb-8">Payroll System</h1>
+            
+            <!-- Navigation Menu -->
+            <nav class="space-y-2">
+                <!-- Dashboard -->
+                <a href="/dashboard" class="flex items-center space-x-2 py-2 px-4 rounded hover:bg-gray-800">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                
+                <!-- Work Logs -->
+                <div sec:authorize="hasRole('EMPLOYEE')">
+                    <a href="/worklogs" class="flex items-center space-x-2 py-2 px-4 rounded hover:bg-gray-800">
+                        <i class="fas fa-clock"></i>
+                        <span>Work Logs</span>
+                    </a>
+                </div>
+                
+                <!-- Payroll -->
+                <div sec:authorize="hasRole('EMPLOYEE')">
+                    <a href="/payroll" class="flex items-center space-x-2 py-2 px-4 rounded hover:bg-gray-800">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>My Payroll</span>
+                    </a>
+                </div>
+                
+                <!-- Admin Section -->
+                <div sec:authorize="hasRole('ADMIN')" class="pt-4">
+                    <h2 class="text-xs uppercase text-gray-500 font-semibold mb-2">Admin</h2>
+                    
+                    <a href="/admin/employees" class="flex items-center space-x-2 py-2 px-4 rounded hover:bg-gray-800">
+                        <i class="fas fa-users"></i>
+                        <span>Employees</span>
+                    </a>
+                    
+                    <a href="/admin/payscales" class="flex items-center space-x-2 py-2 px-4 rounded hover:bg-gray-800">
+                        <i class="fas fa-sliders-h"></i>
+                        <span>Pay Scales</span>
+                    </a>
+                    
+                    <a href="/admin/reports" class="flex items-center space-x-2 py-2 px-4 rounded hover:bg-gray-800">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Reports</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="ml-64 min-h-screen">
+        <!-- Top Navigation Bar -->
+        <nav class="bg-white shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <!-- Mobile menu button -->
+                    <div class="flex items-center md:hidden">
+                        <button type="button" id="mobile-menu-button" class="text-gray-500 hover:text-gray-600">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+
+                    <!-- Right Navigation -->
+                    <div class="flex items-center">
+                        <!-- User Dropdown -->
+                        <div class="ml-3 relative">
+                            <div>
+                                <button type="button" id="user-menu-button" class="flex items-center space-x-2 text-gray-700 hover:text-gray-900">
+                                    <i class="fas fa-user-circle text-xl"></i>
+                                    <span sec:authentication="name" class="text-sm font-medium"></span>
+                                    <i class="fas fa-chevron-down text-xs"></i>
+                                </button>
+                            </div>
+
+                            <!-- Dropdown Menu -->
+                            <div id="user-menu" class="hidden origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                                <div class="py-1">
+                                    <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        Profile
+                                    </a>
+                                    <form th:action="@{/logout}" method="post">
+                                        <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            Sign out
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Page Content -->
+        <main class="py-6">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div th:replace="${content}">
+                    <!-- Page content will be inserted here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+
+        // User dropdown toggle
+        document.getElementById('user-menu-button').addEventListener('click', function() {
+            document.getElementById('user-menu').classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('#user-menu-button')) {
+                document.getElementById('user-menu').classList.add('hidden');
+            }
+        });
+    </script>
+
+    <!-- Additional scripts can be added here -->
+    <th:block th:replace="${scripts}" />
+</body>
+</html>
